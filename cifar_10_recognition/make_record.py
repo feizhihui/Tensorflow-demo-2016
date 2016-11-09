@@ -73,7 +73,7 @@ def read_record(record_name):
     img, label = read_and_decode(record_name)
 
     img_batch, label_batch = tf.train.shuffle_batch([img, label],
-                                                    batch_size=10, capacity=2000,
+                                                    batch_size=5, capacity=2000,
                                                     min_after_dequeue=1000)
     # 初始化所有的op
     init = tf.initialize_all_variables()

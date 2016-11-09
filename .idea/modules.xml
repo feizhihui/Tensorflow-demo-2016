@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Morvan/.idea/Morvan.iml" filepath="$PROJECT_DIR$/../Morvan/.idea/Morvan.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/tensorflow.iml" filepath="$PROJECT_DIR$/.idea/tensorflow.iml" />
     </modules>
   </component>
