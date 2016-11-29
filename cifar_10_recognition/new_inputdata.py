@@ -106,7 +106,7 @@ def create_record(data_classes, one_hot=False, num_classes=10):
             labels = np.hstack((labels, index))
     # Interpret a buffer as a 1-dimensional array.
     data = np.frombuffer(img_raw, dtype=np.uint8)
-    # 转化成[,28,28,1]格式
+    # 转化成[,28,28,3]格式
     data = data.reshape(total, 100, 100, 3)
     if one_hot:
         labels = dense_to_one_hot(labels, num_classes)

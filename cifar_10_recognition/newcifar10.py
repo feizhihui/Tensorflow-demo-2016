@@ -11,14 +11,14 @@ cifar = new_inputdata.read_data_sets(one_hot=True)
 
 # Parameters
 learning_rate = 0.001
-training_iters = 2000
+training_iters = 1000
 display_step = 10
 batch_size = 10
 
 # Network Parameters
 n_input = 30000  # MNIST data input (img shape: 3*100*100=2352)  ===========================
 n_classes = 10  # MNIST total classes (0-3 digits)
-dropout = 0.75  # Dropout, probability to keep units
+dropout = 0.80  # Dropout, probability to keep units
 
 # tf Graph input
 x = tf.placeholder(tf.float32, [None, n_input])
@@ -58,13 +58,14 @@ def conv_net(x, weights, biases, dropout):
     # Fully connected layer
     # Reshape conv2 output to fit fully connected layer input
     fc1 = tf.reshape(conv2, [-1, weights['wd1'].get_shape().as_list()[0]])
+    # 第一层全连接层
     fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'])
     fc1 = tf.nn.relu(fc1)
-    # Apply Dropout
     fc1 = tf.nn.dropout(fc1, dropout)
-
-    # 第一层全连接输出值
+    # 第二层全连接层
     out1 = tf.add(tf.matmul(fc1, weights['wd2']), biases['bd2'])
+    out1 = tf.nn.relu(out1)
+    out1 = tf.nn.dropout(out1, dropout)
     # Output, class prediction
     out2 = tf.add(tf.matmul(out1, weights['out']), biases['out'])
     return out2
@@ -93,10 +94,11 @@ biases = {
 }
 
 # Construct model
-pred = (conv_net(x, weights, biases, keep_prob))
+pred = conv_net(x, weights, biases, keep_prob)
 
 # Define loss and optimizer
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred, y))
+# cost = tf.reduce_mean(tf.nn.cross_entropy_with_logits(pred, y))
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 # Evaluate model
