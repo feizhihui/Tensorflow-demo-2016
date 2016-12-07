@@ -12,9 +12,8 @@ import random
 import zipfile
 
 import numpy as np
-from six.moves import urllib
-from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
+import urllib
 
 # Step 1: Download the data.
 url = 'http://mattmahoney.net/dc/'
@@ -202,6 +201,7 @@ with graph.as_default():
         valid_embed, normalized_embeddings, transpose_b=True)  # 将第二个矩阵先转置 [16,128] * [128,5000] =[16,5000]
 
     # ==============================预测valid_data的上下文 ===============================
+    # pred_num is a list
     pred_embed = tf.nn.embedding_lookup(
         embeddings, pred_num)
     pred_y = tf.nn.softmax(tf.matmul(pred_embed, nce_weights, transpose_b=True) + nce_biases)
@@ -259,15 +259,19 @@ with tf.Session(graph=graph) as session:
     final_embeddings = normalized_embeddings.eval()
 
     # ==============================预测valid_data的上下文 ===============================
-    word_input = raw_input('请输入上下文单词：')
+    print('======================================================')
+    word_input = raw_input('请输入目标单词：')
     while word_input != 'STOP':
-        ylabel = session.run(pred_label, feed_dict={pred_num: [dictionary[word_input]]})
-        print(ylabel, len(ylabel))
-        print('你要预测的单词是:', reverse_dictionary[ylabel[0]])
-        word_input = raw_input('请输入上下文单词：')
+        ylabel, ypred = session.run([pred_label, pred_y], feed_dict={pred_num: [dictionary[word_input]]})
+        # print(ylabel)
+        # print(ypred)
+        print('它的上下文单词可能是:', reverse_dictionary[ylabel[0]])
+        print('======================================================')
+        word_input = raw_input('请输入目标单词：')
 
 
-# Step 6: Visualize the embeddings.
+        # Step 6: Visualize the embeddings.
+
 
 def plot_with_labels(low_dim_embs, labels, filename='tsne.png'):
     assert low_dim_embs.shape[0] >= len(labels), "More labels than embeddings"
@@ -296,6 +300,7 @@ try:
     plot_only = 500
     # 选取embeddings的前500行数据进行拟合降维
     low_dim_embs = tsne.fit_transform(final_embeddings[:plot_only, :])
+    np.savetxt("embeddings.csv", final_embeddings[:plot_only, :], delimiter=',');
     # 前500行单词
     labels = [reverse_dictionary[i] for i in xrange(plot_only)]
     # 画图

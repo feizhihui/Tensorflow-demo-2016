@@ -30,7 +30,7 @@ display_step = 20
 channel_num = 3
 
 input_vec_size = lstm_size = 128  # input_vec_size一行的128pixel,lstm_size表示128个隐藏层节点(等于每个节点处理的pixel数)
-time_step_size = 128  # 128行
+time_step_size = 128  # 128行 * 3通道
 
 n_classes = 10
 
